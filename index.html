@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0b1020">
+<title>تطبيق فكري</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --card: rgba(255,255,255,0.06);
+    --card-border: rgba(255,255,255,0.10);
+    --text: #eef1ff;
+    --muted: #9aa3c7;
+    --accent1: #7c5cff;
+    --accent2: #00d4ff;
+    --danger: #ff5d7a;
+    --ok: #2ee6a6;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", Tahoma, "Noto Naskh Arabic", "Droid Arabic Naskh", sans-serif;
+    background: radial-gradient(1200px 600px at 100% -10%, rgba(124,92,255,.35), transparent 60%),
+                radial-gradient(900px 500px at -10% 110%, rgba(0,212,255,.25), transparent 60%),
+                var(--bg);
+    background-attachment: fixed;
+    color: var(--text);
+    min-height: 100vh;
+    padding: 20px 16px 40px;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  header { text-align: center; margin: 12px 0 22px; animation: fadeDown .7s ease both; }
+  .logo {
+    width: 64px; height: 64px; margin: 0 auto 12px; border-radius: 20px;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    display: grid; place-items: center; font-size: 30px; font-weight: 800;
+    box-shadow: 0 10px 30px rgba(124,92,255,.45);
+    animation: float 4s ease-in-out infinite;
+  }
+  h1 {
+    margin: 0; font-size: 1.55rem; font-weight: 800;
+    background: linear-gradient(90deg, #fff, var(--accent2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .sub { color: var(--muted); margin: 6px 0 0; font-size: .95rem; }
+  .card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 22px; padding: 18px; margin-bottom: 16px;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 12px 32px rgba(0,0,0,.28);
+    animation: fadeUp .6s ease both;
+  }
+  .card h2 { margin: 0 0 14px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+  .counter-value {
+    text-align: center; font-size: 3.4rem; font-weight: 800; margin: 4px 0 14px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    transition: transform .15s ease;
+  }
+  .counter-value.bump { transform: scale(1.18); }
+  .row { display: flex; gap: 10px; }
+  button {
+    font: inherit; color: var(--text); border: none; cursor: pointer;
+    border-radius: 14px; padding: 13px 16px; font-weight: 700;
+    transition: transform .12s ease, box-shadow .2s ease, opacity .2s ease;
+  }
+  button:active { transform: scale(.95); }
+  .btn-primary { background: linear-gradient(135deg, var(--accent1), var(--accent2)); box-shadow: 0 8px 20px rgba(124,92,255,.35); }
+  .btn-soft { background: rgba(255,255,255,.09); border: 1px solid var(--card-border); }
+  .btn-danger { background: rgba(255,93,122,.15); color: var(--danger); border: 1px solid rgba(255,93,122,.35); }
+  .row button { flex: 1; font-size: 1.05rem; }
+  .add-row { display: flex; gap: 10px; margin-bottom: 14px; }
+  input[type="text"] {
+    flex: 1; min-width: 0; font: inherit; color: var(--text);
+    background: rgba(0,0,0,.28); border: 1px solid var(--card-border);
+    border-radius: 14px; padding: 12px 14px; outline: none;
+  }
+  input[type="text"]:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(0,212,255,.15); }
+  input::placeholder { color: var(--muted); }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li.task {
+    display: flex; align-items: center; gap: 10px; padding: 12px;
+    background: rgba(255,255,255,.05); border: 1px solid var(--card-border);
+    border-radius: 14px; margin-bottom: 8px; animation: slideIn .35s ease both;
+  }
+  li.task .check {
+    width: 26px; height: 26px; flex: none; border-radius: 50%;
+    border: 2px solid var(--muted); background: transparent; padding: 0;
+    display: grid; place-items: center; font-size: 15px; color: #06121f;
+  }
+  li.task.done .check { background: var(--ok); border-color: var(--ok); }
+  li.task .text { flex: 1; word-break: break-word; }
+  li.task.done .text { text-decoration: line-through; color: var(--muted); }
+  li.task .del { padding: 6px 10px; font-size: 1rem; border-radius: 10px; }
+  .empty { text-align: center; color: var(--muted); padding: 14px 0 4px; }
+  .stats { display: flex; justify-content: space-between; color: var(--muted); font-size: .85rem; margin-top: 10px; }
+  footer { text-align: center; color: var(--muted); font-size: .8rem; margin-top: 18px; }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
+  @keyframes fadeUp   { from { opacity: 0; transform: translateY(14px); }  to { opacity: 1; transform: none; } }
+  @keyframes slideIn  { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+  @keyframes float    { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @media (max-width: 360px) {
+    h1 { font-size: 1.3rem; }
+    .counter-value { font-size: 2.8rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">ف</div>
+    <h1>أهلاً بيك في تطبيق فكري</h1>
+    <p class="sub">تطبيق تجريبي شغال بدون إنترنت</p>
+  </header>
+
+  <section class="card">
+    <h2>🔢 العداد</h2>
+    <div class="counter-value" id="counterValue">0</div>
+    <div class="row">
+      <button class="btn-soft" id="btnMinus" type="button" aria-label="إنقاص">−</button>
+      <button class="btn-primary" id="btnPlus" type="button" aria-label="زيادة">+</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn-danger" id="btnReset" type="button">تصفير العداد</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>✅ المهام</h2>
+    <div class="add-row">
+      <input type="text" id="taskInput" placeholder="اكتب مهمة جديدة..." maxlength="120" autocomplete="off">
+      <button class="btn-primary" id="btnAdd" type="button">إضافة</button>
+    </div>
+    <ul id="taskList"></ul>
+    <div class="empty" id="emptyMsg">لسه مفيش مهام، ضيف أول مهمة 👆</div>
+    <div class="stats"><span id="statTotal"></span><span id="statDone"></span></div>
+  </section>
+
+  <footer>Fikry Demo App • يحفظ بياناتك على جهازك فقط</footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var KEY_COUNTER = "fikry_counter";
+  var KEY_TASKS = "fikry_tasks";
+
+  function load(key, fallback) {
+    try {
+      var raw = window.localStorage.getItem(key);
+      return raw === null ? fallback : JSON.parse(raw);
+    } catch (e) { return fallback; }
+  }
+  function save(key, value) {
+    try { window.localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* storage unavailable */ }
+  }
+
+  var counter = Number(load(KEY_COUNTER, 0));
+  if (!isFinite(counter)) counter = 0;
+  var tasks = load(KEY_TASKS, []);
+  if (!Array.isArray(tasks)) tasks = [];
+
+  var elValue = document.getElementById("counterValue");
+  var elList = document.getElementById("taskList");
+  var elEmpty = document.getElementById("emptyMsg");
+  var elInput = document.getElementById("taskInput");
+  var elTotal = document.getElementById("statTotal");
+  var elDone = document.getElementById("statDone");
+
+  function renderCounter(animate) {
+    elValue.textContent = String(counter);
+    if (animate) {
+      elValue.classList.add("bump");
+      setTimeout(function () { elValue.classList.remove("bump"); }, 150);
+    }
+  }
+  function setCounter(v) { counter = v; save(KEY_COUNTER, counter); renderCounter(true); }
+
+  function renderTasks() {
+    elList.innerHTML = "";
+    tasks.forEach(function (t) {
+      var li = document.createElement("li");
+      li.className = "task" + (t.done ? " done" : "");
+
+      var check = document.createElement("button");
+      check.type = "button";
+      check.className = "check";
+      check.setAttribute("aria-label", "تم");
+      check.textContent = t.done ? "✓" : "";
+      check.addEventListener("click", function () { toggleTask(t.id); });
+
+      var text = document.createElement("span");
+      text.className = "text";
+      text.textContent = t.text;
+
+      var del = document.createElement("button");
+      del.type = "button";
+      del.className = "btn-danger del";
+      del.setAttribute("aria-label", "حذف");
+      del.textContent = "🗑";
+      del.addEventListener("click", function () { deleteTask(t.id); });
+
+      li.appendChild(check);
+      li.appendChild(text);
+      li.appendChild(del);
+      elList.appendChild(li);
+    });
+    var done = tasks.filter(function (t) { return t.done; }).length;
+    elEmpty.style.display = tasks.length ? "none" : "block";
+    elTotal.textContent = "الإجمالي: " + tasks.length;
+    elDone.textContent = "المنجز: " + done;
+  }
+
+  function addTask() {
+    var v = elInput.value.trim();
+    if (!v) { elInput.focus(); return; }
+    tasks.unshift({ id: Date.now() + Math.random(), text: v, done: false });
+    save(KEY_TASKS, tasks);
+    elInput.value = "";
+    renderTasks();
+  }
+  function toggleTask(id) {
+    tasks.forEach(function (t) { if (t.id === id) t.done = !t.done; });
+    save(KEY_TASKS, tasks);
+    renderTasks();
+  }
+  function deleteTask(id) {
+    tasks = tasks.filter(function (t) { return t.id !== id; });
+    save(KEY_TASKS, tasks);
+    renderTasks();
+  }
+
+  document.getElementById("btnPlus").addEventListener("click", function () { setCounter(counter + 1); });
+  document.getElementById("btnMinus").addEventListener("click", function () { setCounter(counter - 1); });
+  document.getElementById("btnReset").addEventListener("click", function () { setCounter(0); });
+  document.getElementById("btnAdd").addEventListener("click", addTask);
+  elInput.addEventListener("keydown", function (e) { if (e.key === "Enter") addTask(); });
+
+  renderCounter(false);
+  renderTasks();
+})();
+</script>
+</body>
+</html>
